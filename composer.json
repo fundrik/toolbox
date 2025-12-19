@@ -1,0 +1,68 @@
+{
+	"name": "fundrik/toolbox",
+	"description": "A collection of general-purpose PHP utilities used across Fundrik projects",
+	"keywords": [
+		"php",
+		"utilities",
+		"toolbox",
+		"helpers",
+		"fundrik"
+	],
+	"homepage": "https://fundrik.ru",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Denis Yanchevskiy",
+			"email": "denis@denisco.pro"
+		}
+	],
+	"support": {
+		"email": "denis@denisco.pro",
+		"issues": "https://github.com/fundrik/toolbox/issues",
+		"source": "https://github.com/fundrik/toolbox"
+	},
+	"require": {
+		"php": "^8.2"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"fundrik/coding-standard": "^0.1.0",
+		"wp-coding-standards/wpcs": "^3.1",
+		"phpcompatibility/php-compatibility": "dev-develop as 9.4.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"slevomat/coding-standard": "^8.19",
+		"phpunit/phpunit": "^11.5",
+		"mockery/mockery": "^1.6",
+		"phpstan/phpstan": "^2.1",
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan-strict-rules": "^2.0",
+		"phpstan/phpstan-deprecation-rules": "^2.0",
+		"infection/infection": "^0.31.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Fundrik\\Toolbox\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Fundrik\\Toolbox\\Tests\\": "tests/"
+		}
+	},
+	"scripts": {
+		"lint": "vendor/bin/phpcs .",
+		"lint:fix": "vendor/bin/phpcbf .",
+		"test": "vendor/bin/phpunit",
+		"test:coverage": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-html=.phpunit.cache/report-coverage",
+		"phpstan": "vendor/bin/phpstan analyze --memory-limit=2048M",
+		"infection": "vendor/bin/infection --show-mutations "
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true,
+			"infection/extension-installer": true
+		}
+	}
+}
