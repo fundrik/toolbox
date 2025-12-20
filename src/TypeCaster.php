@@ -89,10 +89,6 @@ final readonly class TypeCaster {
 	 */
 	public static function to_float( mixed $value ): float {
 
-		if ( is_bool( $value ) ) {
-			self::throw_invalid_cast_exception( 'float', $value );
-		}
-
 		if ( is_float( $value ) ) {
 			return $value;
 		}

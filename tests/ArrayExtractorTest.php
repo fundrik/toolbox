@@ -31,6 +31,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'flag' \(expected bool\):/" );
+
 		ArrayExtractor::extract_bool_optional( [ 'flag' => 'maybe' ], 'flag' );
 	}
 
@@ -39,6 +40,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->assertSame( 123, ArrayExtractor::extract_int_optional( [ 'num' => '123' ], 'num' ) );
 		$this->assertSame( 42, ArrayExtractor::extract_int_optional( [ 'num' => 42 ], 'num' ) );
+		$this->assertSame( 123, ArrayExtractor::extract_int_optional( [ 'num' => '00123' ], 'num' ) );
 		$this->assertNull( ArrayExtractor::extract_int_optional( [], 'missing_num' ) );
 	}
 
@@ -47,6 +49,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'num' \(expected int\):/" );
+
 		ArrayExtractor::extract_int_optional( [ 'num' => 'not-an-int' ], 'num' );
 	}
 
@@ -56,6 +59,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 		$this->assertSame( 123.45, ArrayExtractor::extract_float_optional( [ 'flt' => '123.45' ], 'flt' ) );
 		$this->assertSame( 0.0, ArrayExtractor::extract_float_optional( [ 'flt' => 0 ], 'flt' ) );
 		$this->assertSame( 99.0, ArrayExtractor::extract_float_optional( [ 'flt' => 99 ], 'flt' ) );
+		$this->assertSame( 5.0, ArrayExtractor::extract_float_optional( [ 'flt' => '5.0' ], 'flt' ) );
 		$this->assertNull( ArrayExtractor::extract_float_optional( [], 'missing_flt' ) );
 	}
 
@@ -64,6 +68,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'flt' \(expected float\):/" );
+
 		ArrayExtractor::extract_float_optional( [ 'flt' => 'not-a-float' ], 'flt' );
 	}
 
@@ -71,6 +76,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 	public function it_extracts_string_optional_correctly(): void {
 
 		$this->assertSame( 'text', ArrayExtractor::extract_string_optional( [ 'text' => 'text' ], 'text' ) );
+		$this->assertSame( '  text  ', ArrayExtractor::extract_string_optional( [ 'text' => '  text  ' ], 'text' ) );
 		$this->assertSame( '', ArrayExtractor::extract_string_optional( [ 'text' => '' ], 'text' ) );
 		$this->assertNull( ArrayExtractor::extract_string_optional( [], 'missing_text' ) );
 	}
@@ -80,25 +86,8 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'text' \(expected string\):/" );
+
 		ArrayExtractor::extract_string_optional( [ 'text' => 123 ], 'text' );
-	}
-
-	#[Test]
-	public function it_extracts_scalar_optional_correctly(): void {
-
-		$this->assertTrue( ArrayExtractor::extract_scalar_optional( [ 'val' => true ], 'val' ) );
-		$this->assertSame( 42, ArrayExtractor::extract_scalar_optional( [ 'val' => '42' ], 'val' ) );
-		$this->assertSame( 3.14, ArrayExtractor::extract_scalar_optional( [ 'val' => 3.14 ], 'val' ) );
-		$this->assertSame( 'hello', ArrayExtractor::extract_scalar_optional( [ 'val' => 'hello' ], 'val' ) );
-		$this->assertNull( ArrayExtractor::extract_scalar_optional( [], 'missing_val' ) );
-	}
-
-	#[Test]
-	public function it_throws_on_invalid_scalar_optional(): void {
-
-		$this->expectException( ArrayExtractionException::class );
-		$this->expectExceptionMessageMatches( "/^Invalid value at key 'val' \(expected scalar\):/" );
-		ArrayExtractor::extract_scalar_optional( [ 'val' => [] ], 'val' );
 	}
 
 	#[Test]
@@ -108,8 +97,8 @@ final class ArrayExtractorTest extends FundrikTestCase {
 			'a' => 1,
 			'b' => 2,
 		];
-		$wrapper = [ 'data' => $data ];
-		$this->assertSame( $data, ArrayExtractor::extract_array_optional( $wrapper, 'data' ) );
+
+		$this->assertSame( $data, ArrayExtractor::extract_array_optional( [ 'data' => $data ], 'data' ) );
 		$this->assertNull( ArrayExtractor::extract_array_optional( [], 'missing_data' ) );
 	}
 
@@ -118,6 +107,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'data' \(expected array\):/" );
+
 		ArrayExtractor::extract_array_optional( [ 'data' => 'not-an-array' ], 'data' );
 	}
 
@@ -126,7 +116,17 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->assertTrue( ArrayExtractor::extract_bool_required( [ 'flag' => true ], 'flag' ) );
 		$this->assertFalse( ArrayExtractor::extract_bool_required( [ 'flag' => false ], 'flag' ) );
-		$this->assertTrue( ArrayExtractor::extract_bool_required( [ 'flag' => 'yes' ], 'flag' ) );
+		$this->assertTrue( ArrayExtractor::extract_bool_required( [ 'flag' => '1' ], 'flag' ) );
+		$this->assertFalse( ArrayExtractor::extract_bool_required( [ 'flag' => 0 ], 'flag' ) );
+	}
+
+	#[Test]
+	public function it_throws_on_invalid_bool_required(): void {
+
+		$this->expectException( ArrayExtractionException::class );
+		$this->expectExceptionMessageMatches( "/^Invalid value at key 'flag' \(expected bool\):/" );
+
+		ArrayExtractor::extract_bool_required( [ 'flag' => 'yes' ], 'flag' );
 	}
 
 	#[Test]
@@ -134,6 +134,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessage( "Missing required key 'missing_flag'." );
+
 		ArrayExtractor::extract_bool_required( [], 'missing_flag' );
 	}
 
@@ -141,6 +142,8 @@ final class ArrayExtractorTest extends FundrikTestCase {
 	public function it_extracts_int_required_correctly(): void {
 
 		$this->assertSame( 123, ArrayExtractor::extract_int_required( [ 'num' => '123' ], 'num' ) );
+		$this->assertSame( 123, ArrayExtractor::extract_int_required( [ 'num' => '00123' ], 'num' ) );
+		$this->assertSame( 456, ArrayExtractor::extract_int_required( [ 'num' => 456 ], 'num' ) );
 	}
 
 	#[Test]
@@ -148,6 +151,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'num' \(expected int\):/" );
+
 		ArrayExtractor::extract_int_required( [ 'num' => 5.99 ], 'num' );
 	}
 
@@ -156,6 +160,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessage( "Missing required key 'missing_num'." );
+
 		ArrayExtractor::extract_int_required( [], 'missing_num' );
 	}
 
@@ -164,6 +169,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'num' \(expected int\):/" );
+
 		ArrayExtractor::extract_int_required( [ 'num' => 'abc' ], 'num' );
 	}
 
@@ -173,6 +179,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 		$this->assertSame( 123.45, ArrayExtractor::extract_float_required( [ 'flt' => '123.45' ], 'flt' ) );
 		$this->assertSame( 0.0, ArrayExtractor::extract_float_required( [ 'flt' => 0 ], 'flt' ) );
 		$this->assertSame( 99.0, ArrayExtractor::extract_float_required( [ 'flt' => 99 ], 'flt' ) );
+		$this->assertSame( 5.0, ArrayExtractor::extract_float_required( [ 'flt' => '5.0' ], 'flt' ) );
 	}
 
 	#[Test]
@@ -180,6 +187,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessage( "Missing required key 'missing_flt'." );
+
 		ArrayExtractor::extract_float_required( [], 'missing_flt' );
 	}
 
@@ -188,13 +196,24 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'flt' \(expected float\):/" );
+
 		ArrayExtractor::extract_float_required( [ 'flt' => 'not-a-float' ], 'flt' );
+	}
+
+	#[Test]
+	public function it_throws_on_invalid_float_string_shapes(): void {
+
+		$this->expectException( ArrayExtractionException::class );
+		$this->expectExceptionMessageMatches( "/^Invalid value at key 'flt' \(expected float\):/" );
+
+		ArrayExtractor::extract_float_required( [ 'flt' => ' 123.45' ], 'flt' );
 	}
 
 	#[Test]
 	public function it_extracts_string_required_correctly(): void {
 
 		$this->assertSame( 'text', ArrayExtractor::extract_string_required( [ 'text' => 'text' ], 'text' ) );
+		$this->assertSame( '  text  ', ArrayExtractor::extract_string_required( [ 'text' => '  text  ' ], 'text' ) );
 	}
 
 	#[Test]
@@ -202,6 +221,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessage( "Missing required key 'missing_text'." );
+
 		ArrayExtractor::extract_string_required( [], 'missing_text' );
 	}
 
@@ -210,32 +230,8 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'text' \(expected string\):/" );
+
 		ArrayExtractor::extract_string_required( [ 'text' => 123 ], 'text' );
-	}
-
-	#[Test]
-	public function it_extracts_scalar_required_correctly(): void {
-
-		$this->assertTrue( ArrayExtractor::extract_scalar_required( [ 'val' => true ], 'val' ) );
-		$this->assertSame( 42, ArrayExtractor::extract_scalar_required( [ 'val' => '42' ], 'val' ) );
-		$this->assertSame( 3.14, ArrayExtractor::extract_scalar_required( [ 'val' => 3.14 ], 'val' ) );
-		$this->assertSame( 'hello', ArrayExtractor::extract_scalar_required( [ 'val' => 'hello' ], 'val' ) );
-	}
-
-	#[Test]
-	public function it_throws_on_missing_scalar_required(): void {
-
-		$this->expectException( ArrayExtractionException::class );
-		$this->expectExceptionMessage( "Missing required key 'missing_val'." );
-		ArrayExtractor::extract_scalar_required( [], 'missing_val' );
-	}
-
-	#[Test]
-	public function it_throws_on_invalid_scalar_required(): void {
-
-		$this->expectException( ArrayExtractionException::class );
-		$this->expectExceptionMessageMatches( "/^Invalid value at key 'val' \(expected scalar\):/" );
-		ArrayExtractor::extract_scalar_required( [ 'val' => [] ], 'val' );
 	}
 
 	#[Test]
@@ -245,6 +241,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 			'x' => 10,
 			'y' => 20,
 		];
+
 		$this->assertSame( $data, ArrayExtractor::extract_array_required( [ 'meta' => $data ], 'meta' ) );
 	}
 
@@ -253,6 +250,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessage( "Missing required key 'missing_meta'." );
+
 		ArrayExtractor::extract_array_required( [], 'missing_meta' );
 	}
 
@@ -261,6 +259,7 @@ final class ArrayExtractorTest extends FundrikTestCase {
 
 		$this->expectException( ArrayExtractionException::class );
 		$this->expectExceptionMessageMatches( "/^Invalid value at key 'meta' \(expected array\):/" );
+
 		ArrayExtractor::extract_array_required( [ 'meta' => 'not-an-array' ], 'meta' );
 	}
 
@@ -281,7 +280,6 @@ final class ArrayExtractorTest extends FundrikTestCase {
 			[ ArrayExtractor::extract_int_optional( ... ), 'num' ],
 			[ ArrayExtractor::extract_float_optional( ... ), 'flt' ],
 			[ ArrayExtractor::extract_string_optional( ... ), 'text' ],
-			[ ArrayExtractor::extract_scalar_optional( ... ), 'val' ],
 			[ ArrayExtractor::extract_array_optional( ... ), 'arr' ],
 		];
 	}
