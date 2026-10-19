@@ -5,15 +5,10 @@ declare(strict_types=1);
 namespace Fundrik\Toolbox\Tests;
 
 use Fundrik\Toolbox\ArrayValidator;
-use Fundrik\Toolbox\TypeCaster;
-use Fundrik\Toolbox\TypeValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass( ArrayValidator::class )]
-#[UsesClass( TypeValidator::class )]
-#[UsesClass( TypeCaster::class )]
 final class ArrayValidatorTest extends FundrikTestCase {
 
 	#[Test]

@@ -30,7 +30,7 @@ final readonly class ArrayValidator {
 
 		foreach ( array_keys( $value ) as $key ) {
 
-			if ( ! TypeValidator::is_string( $key ) ) {
+			if ( ! is_string( $key ) ) {
 				return false;
 			}
 		}
@@ -57,7 +57,7 @@ final readonly class ArrayValidator {
 
 		foreach ( $value as $key => $item ) {
 
-			if ( ! TypeValidator::is_string( $key ) || ! TypeValidator::is_string( $item ) ) {
+			if ( ! is_string( $key ) || ! is_string( $item ) ) {
 				return false;
 			}
 		}

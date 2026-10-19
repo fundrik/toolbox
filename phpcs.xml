@@ -43,7 +43,6 @@
 		<exclude-pattern>src/ArrayExtractor.php</exclude-pattern>
 		<exclude-pattern>src/ArrayValidator.php</exclude-pattern>
 		<exclude-pattern>src/TypeCaster.php</exclude-pattern>
-		<exclude-pattern>src/TypeValidator.php</exclude-pattern>
 		<exclude-pattern>examples/ConfigurationExample.php</exclude-pattern>
 	</rule>
 

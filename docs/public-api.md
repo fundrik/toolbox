@@ -16,13 +16,7 @@ Fundrik Toolbox exposes utilities. It has no runtime dependencies beyond PHP.
 
 Each method has a nullable counterpart named `to_*_nullable()`. It returns `null` for a `null` input and otherwise applies the same rules as the non-nullable method.
 
-The methods are strict validators with limited normalization, not general-purpose PHP casts. See [Conversion rules](conversion-rules.md).
-
-## TypeValidator
-
-`Fundrik\Toolbox\TypeValidator` reports whether `TypeCaster` accepts a value. It exposes `is_bool()`, `is_int()`, `is_float()`, `is_string()`, and `is_datetime_immutable($value, $format)`. Each method has an `is_*_nullable()` counterpart that also accepts `null`.
-
-These methods return `true` for values the corresponding caster can convert and `false` when it throws `InvalidArgumentException`. Their names refer to the library's accepted values, not PHP's native runtime types: `is_bool('1')` returns `true`.
+These methods return native target values after checking explicitly supported input shapes. See [Conversion rules](conversion-rules.md).
 
 ## ArrayValidator
 
@@ -70,4 +64,4 @@ When value conversion fails, the underlying `InvalidArgumentException` is retain
 
 ## Compatibility
 
-The public methods of `TypeCaster`, `TypeValidator`, `ArrayValidator`, and `ArrayExtractor`, together with `ArrayExtractionException`, follow semantic versioning. Private implementation details and exception message wording are not compatibility guarantees.
+The public methods of `TypeCaster`, `ArrayValidator`, and `ArrayExtractor`, together with `ArrayExtractionException`, follow semantic versioning. Private implementation details and exception message wording are not compatibility guarantees.

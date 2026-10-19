@@ -4,7 +4,6 @@
 
 ### Added
 
-- Add `TypeValidator` for boolean checks using `TypeCaster` conversion rules.
 - Add `ArrayValidator` for string-keyed arrays, with optional string-value checks.
 
 [1.1.0]: https://github.com/fundrik/toolbox/compare/v1.0.0...HEAD
