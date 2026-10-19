@@ -25,6 +25,7 @@ composer require fundrik/toolbox
 
 - Strictly convert raw values to `bool`, `int`, `float`, `string`, or `DateTimeImmutable`.
 - Check whether raw values are accepted by the strict conversion rules.
+- Check whether arrays have string keys, optionally requiring string values.
 - Preserve `null` explicitly through nullable conversion methods.
 - Extract required or optional typed values from associative arrays.
 - Distinguish a missing key from a present `null` value.
@@ -55,6 +56,15 @@ $is_limit = TypeValidator::is_int('-10'); // false
 ```
 
 Validator methods use the `TypeCaster` conversion rules. For example, `TypeValidator::is_bool('1')` returns `true` even though PHP's built-in `is_bool('1')` returns `false`.
+
+Use `ArrayValidator` to check array shapes at input boundaries:
+
+```php
+use Fundrik\Toolbox\ArrayValidator;
+
+$has_string_keys = ArrayValidator::is_array_with_string_keys($input);
+$has_string_keys_and_values = ArrayValidator::is_array_with_string_keys_and_values($input);
+```
 
 Use `ArrayExtractor` at an associative-array boundary:
 

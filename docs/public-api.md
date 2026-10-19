@@ -1,6 +1,6 @@
 # Public API
 
-Fundrik Toolbox exposes three static utility classes and one dedicated exception. It has no runtime dependencies beyond PHP.
+Fundrik Toolbox exposes utilities. It has no runtime dependencies beyond PHP.
 
 ## TypeCaster
 
@@ -23,6 +23,17 @@ The methods are strict validators with limited normalization, not general-purpos
 `Fundrik\Toolbox\TypeValidator` reports whether `TypeCaster` accepts a value. It exposes `is_bool()`, `is_int()`, `is_float()`, `is_string()`, and `is_datetime_immutable($value, $format)`. Each method has an `is_*_nullable()` counterpart that also accepts `null`.
 
 These methods return `true` for values the corresponding caster can convert and `false` when it throws `InvalidArgumentException`. Their names refer to the library's accepted values, not PHP's native runtime types: `is_bool('1')` returns `true`.
+
+## ArrayValidator
+
+`Fundrik\Toolbox\ArrayValidator` checks array shapes without converting values:
+
+| Method | Accepted input |
+| --- | --- |
+| `is_array_with_string_keys($value)` | Array whose keys are all strings; values may have any type. |
+| `is_array_with_string_keys_and_values($value)` | Array whose keys and values are all strings. |
+
+Both methods return `false` for non-arrays and accept an empty array. PHP converts numeric string keys such as `'0'` to integers, so those keys do not pass either check.
 
 ## ArrayExtractor
 
@@ -59,4 +70,4 @@ When value conversion fails, the underlying `InvalidArgumentException` is retain
 
 ## Compatibility
 
-The public methods of `TypeCaster`, `TypeValidator`, and `ArrayExtractor`, together with `ArrayExtractionException`, follow semantic versioning. Private implementation details and exception message wording are not compatibility guarantees.
+The public methods of `TypeCaster`, `TypeValidator`, `ArrayValidator`, and `ArrayExtractor`, together with `ArrayExtractionException`, follow semantic versioning. Private implementation details and exception message wording are not compatibility guarantees.
