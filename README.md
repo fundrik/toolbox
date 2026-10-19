@@ -24,6 +24,7 @@ composer require fundrik/toolbox
 ## Capabilities
 
 - Strictly convert raw values to `bool`, `int`, `float`, `string`, or `DateTimeImmutable`.
+- Check whether raw values are accepted by the strict conversion rules.
 - Preserve `null` explicitly through nullable conversion methods.
 - Extract required or optional typed values from associative arrays.
 - Distinguish a missing key from a present `null` value.
@@ -43,6 +44,17 @@ $started_at = TypeCaster::to_datetime_immutable(
 	'Y-m-d H:i:s',
 );
 ```
+
+Use `TypeValidator` when only a yes/no answer is needed:
+
+```php
+use Fundrik\Toolbox\TypeValidator;
+
+$is_enabled = TypeValidator::is_bool('1'); // true
+$is_limit = TypeValidator::is_int('-10'); // false
+```
+
+Validator methods use the `TypeCaster` conversion rules. For example, `TypeValidator::is_bool('1')` returns `true` even though PHP's built-in `is_bool('1')` returns `false`.
 
 Use `ArrayExtractor` at an associative-array boundary:
 
@@ -77,7 +89,7 @@ With an optional method, `null` can therefore mean that the key was absent. Use 
 
 ## Failures
 
-`TypeCaster` throws `InvalidArgumentException` for unsupported values. `ArrayExtractor` throws `ArrayExtractionException` when a required key is missing or a present value is invalid. A casting failure is available as the exception's `previous` exception.
+`TypeCaster` throws `InvalidArgumentException` for unsupported values. `TypeValidator` returns `false` for those values. `ArrayExtractor` throws `ArrayExtractionException` when a required key is missing or a present value is invalid. A casting failure is available as the exception's `previous` exception.
 
 Branch on exception classes rather than message text. Messages are intended for developers and may change independently of the exception contract.
 
